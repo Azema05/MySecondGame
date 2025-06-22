@@ -1,12 +1,14 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
     #region PublicVaribles
     public static PlayerController Instanse;
     #endregion
-    
+
     #region PrivateVaribles
     [SerializeField]
     private ScoreController scoreController;
@@ -14,6 +16,11 @@ public class PlayerController : MonoBehaviour
     private HealsController healsController;
     [SerializeField]
     private GameObject projectilePrefab;
+
+    [Space]
+    [SerializeField] private UnityEvent endGameEvent = new UnityEvent();
+    [SerializeField] private string namePrefs = "BestScore";
+    private bool endGame = false;
 
     private float horizontalInput;
     private float verticalInput;
@@ -23,6 +30,9 @@ public class PlayerController : MonoBehaviour
     private float zBottom = -2.0f;
     private int lifeCount = 3;
     private int score = 0;
+    private int bestScore = 0;
+    [SerializeField]
+    private List<MainMenuController> mainMenus = new();
     private const int LIFE_COUNT_MAX = 3;
     #endregion
 
@@ -37,6 +47,8 @@ public class PlayerController : MonoBehaviour
         }
 
         Instanse = this;
+        bestScore = PlayerPrefs.GetInt(namePrefs, 0);
+        Debug.Log(bestScore);
     }
 
     void LimitWall()
@@ -57,6 +69,25 @@ public class PlayerController : MonoBehaviour
         if (transform.position.z < zBottom)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, zBottom);
+        }
+    }
+
+    private void CheckBestScore(int score, ref int bestScore, string namePrefs)
+    {
+        if (bestScore >= score)
+        {
+            return;
+        }
+
+        PlayerPrefs.SetInt(namePrefs, score);
+        bestScore = score;
+    }
+
+    void SetMenuPrefs()
+    {
+        foreach (var menuList in mainMenus)
+        {
+            menuList.SetPrefsName(namePrefs);
         }
     }
     #endregion
@@ -93,12 +124,12 @@ public class PlayerController : MonoBehaviour
         healsController.Damage();
         if (lifeCount + value <= 0)
         {
-            Debug.Log("Game Over!");
-            #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-            return;
-            #endif
-            Application.Quit();
+            if (!endGame)
+            {
+                endGame = true;
+                endGameEvent?.Invoke();
+            }
+
             return;
         }
 
@@ -118,6 +149,7 @@ public class PlayerController : MonoBehaviour
         score += value;
         Debug.Log($"Score now: {score}");
         scoreController.SetScore(score);
+        CheckBestScore(score, ref bestScore, namePrefs);
     }
     #endregion
 }

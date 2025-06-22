@@ -517,9 +517,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healsBarGreen: {fileID: 2367077110122994929}
-  Damage: 1
-  Score: 1
-  Life: 1
+  _damage: 1
+  _score: 1
+  _life: 1
 --- !u!65 &3973978953866402326
 BoxCollider:
   m_ObjectHideFlags: 0
