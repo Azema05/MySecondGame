@@ -38,19 +38,7 @@ public class PlayerController : MonoBehaviour
 
 
     #region PrivatrMetods
-    void Awake()
-    {
-        if (Instanse != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instanse = this;
-        bestScore = PlayerPrefs.GetInt(namePrefs, 0);
-        Debug.Log(bestScore);
-    }
-
+    
     void LimitWall()
     {
         if (transform.position.x < -xRange)
@@ -94,6 +82,18 @@ public class PlayerController : MonoBehaviour
 
 
     #region UnityCallback
+        void Awake()
+    {
+        if (Instanse != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instanse = this;
+        bestScore = PlayerPrefs.GetInt(namePrefs, 0);
+        Debug.Log(bestScore);
+    }
 
     void Update()
     {

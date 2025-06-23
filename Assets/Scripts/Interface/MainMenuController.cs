@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
+    #region PrivateVaribles
     [SerializeField]
     private List<GameObject> panels = new();
     [SerializeField]
@@ -12,16 +13,9 @@ public class MainMenuController : MonoBehaviour
     private string namePrefs = ("BestScore");
 
     bool canLoadScene = true;
+    #endregion
 
-
-    void ActivedPanels(bool active)
-    {
-        foreach (var panel in panels)
-        {
-            panel.SetActive(active);
-        }
-    }
-
+    #region UnityCallback
     void Awake()
     {
         if (Time.timeScale == 0)
@@ -30,14 +24,24 @@ public class MainMenuController : MonoBehaviour
         }
         ActivedPanels(false);
     }
+    #endregion
+
+    #region PrivatMetods
+    void ActivedPanels(bool active)
+    {
+        foreach (var panel in panels)
+        {
+            panel.SetActive(active);
+        }
+    }
 
     void SetBestScore()
     {
         bestScoreNum.text = PlayerPrefs.GetInt(namePrefs, 0).ToString();
     }
+    #endregion
 
-
-
+    #region PublicMetods
     public void PauseGame(bool active)
     {
         if (active)
@@ -75,4 +79,5 @@ public class MainMenuController : MonoBehaviour
         namePrefs = name;
         SetBestScore();
     }
+    #endregion
 }
