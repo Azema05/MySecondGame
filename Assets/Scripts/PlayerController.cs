@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+using static DetectCollisions;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region PrivateVaribles
+    [SerializeField]
+    private AudioClip clipHit;
+
+    [Space]
     [SerializeField]
     private ScoreController scoreController;
     [SerializeField]
@@ -37,7 +42,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
 
-    #region PrivatrMetods
+    #region PrivateMetods
     
     void LimitWall()
     {
@@ -110,6 +115,8 @@ public class PlayerController : MonoBehaviour
 
             DestroyOutOfBounds destroyOutOfBounds = food.AddComponent<DestroyOutOfBounds>();
             DetectCollisions detectCollisions = food.AddComponent<DetectCollisions>();
+            detectCollisions.KindDetectTrigger = KindDetect.TriggerAnimal;
+            detectCollisions.ClipHit = clipHit;
             MoveForward moveForward = food.AddComponent<MoveForward>();
             moveForward.SetSpeed(20);
         }
@@ -121,12 +128,12 @@ public class PlayerController : MonoBehaviour
     #region PublicMetods
     public void Damage(int value)
     {
-        healsController.Damage();
         if (lifeCount + value <= 0)
         {
             if (!endGame)
             {
                 endGame = true;
+                healsController.SetHearts(0);
                 endGameEvent?.Invoke();
             }
 
@@ -134,6 +141,7 @@ public class PlayerController : MonoBehaviour
         }
 
         lifeCount = Mathf.Clamp(lifeCount + value, 0, LIFE_COUNT_MAX);
+        healsController.SetHearts(lifeCount);
         Debug.Log($"Life count now: {lifeCount}");
     }
 

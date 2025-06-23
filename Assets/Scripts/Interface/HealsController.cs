@@ -6,25 +6,25 @@ public class HealsController : MonoBehaviour
     #region PrivateVaribles
     [SerializeField]
     private Image[] heart = new Image[3];
-    private int heartCountNow = 3;
-    #endregion
-
-    #region UnityCallBack
-    void Awake()
-    {
-        heartCountNow = heart.Length;
-    }
     #endregion
 
     #region PublicMetods
-    public void Damage()
+    public void SetHearts(int countHeart)
     {
-        if (heartCountNow - 1 < 0)
+        countHeart = Mathf.Clamp(countHeart, 0, heart.Length);
+        for (int i = 0; i < heart.Length; i++)
         {
-            return;
+            if (i < countHeart)
+            {
+                heart[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                heart[i].gameObject.SetActive(false);
+            }
         }
-        heartCountNow--;
-        heart[heartCountNow].gameObject.SetActive(false);
     }
     #endregion
 }
+
+
